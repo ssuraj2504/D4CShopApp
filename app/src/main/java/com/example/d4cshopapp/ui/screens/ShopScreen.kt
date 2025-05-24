@@ -344,7 +344,7 @@ fun ProductCard(
     onLikeClick: () -> Unit,
     onAddToCartClick: () -> Unit
 ) {
-    Box(
+    Column(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 24.dp)
@@ -353,21 +353,35 @@ fun ProductCard(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(220.dp)
+                .height(200.dp)
         ) {
             Image(
                 painter = painterResource(id = R.drawable.product_banner),
                 contentDescription = null,
                 contentScale = ContentScale.FillBounds,
-                modifier = Modifier
-                    .width(600.dp)
-                    .height(600.dp)
+                modifier = Modifier.matchParentSize()
             )
+            // Product image centered within the banner
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .align(Alignment.Center),
+                contentAlignment = Alignment.Center
+            ) {
+                Image(
+                    painter = painterResource(id = product.imageRes),
+                    contentDescription = product.name,
+                    modifier = Modifier
+                        .size(180.dp)
+                        .shadow(8.dp, RoundedCornerShape(18.dp)),
+                    contentScale = ContentScale.Fit
+                )
+            }
             // Heart icon (slightly outside top left)
             Box(
                 modifier = Modifier
                     .offset(x = (-18).dp, y = (-18).dp)
-                    .size(36.dp)
+                    .size(44.dp)
                     .clip(CircleShape)
                     .background(Color(0xFF232323))
                     .clickable { onLikeClick() },
@@ -377,7 +391,7 @@ fun ProductCard(
                     imageVector = if (isLiked) Icons.Filled.Favorite else Icons.Default.Favorite,
                     contentDescription = null,
                     tint = if (isLiked) Color(0xFFB6FF5B) else Color(0xFFB6FF5B).copy(alpha = 0.5f),
-                    modifier = Modifier.size(20.dp)
+                    modifier = Modifier.size(24.dp)
                 )
             }
             // Best seller badge (slightly outside top right)
@@ -393,24 +407,13 @@ fun ProductCard(
                     Text("Best seller", color = Color.Black, fontWeight = FontWeight.Bold, fontSize = 14.sp)
                 }
             }
-            // Product image centered, floating above info panel
-            Image(
-                painter = painterResource(id = product.imageRes),
-                contentDescription = product.name,
-                modifier = Modifier
-                    .size(170.dp)
-                    .align(Alignment.BottomCenter)
-                    .offset(y = 40.dp)
-                    .shadow(8.dp, RoundedCornerShape(18.dp)),
-                contentScale = ContentScale.Fit
-            )
         }
         // Info panel with custom background
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 140.dp)
-                .height(180.dp)
+                .height(220.dp)
+                .offset(y = (-20).dp)
         ) {
             Image(
                 painter = painterResource(id = R.drawable.product_info_banner),
@@ -418,7 +421,11 @@ fun ProductCard(
                 contentScale = ContentScale.FillBounds,
                 modifier = Modifier.matchParentSize()
             )
-            Column(Modifier.padding(start = 24.dp, end = 24.dp, top = 24.dp, bottom = 12.dp)) {
+            Column(
+                Modifier
+                    .fillMaxSize()
+                    .padding(start = 24.dp, end = 24.dp, top = 16.dp, bottom = 12.dp)
+            ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(
                         product.name,
@@ -487,27 +494,32 @@ fun ProductCard(
                         textDecoration = TextDecoration.Underline
                     )
                 }
-            }
-            // Add to cart button (overlapping bottom right)
-            Box(
-                modifier = Modifier
-                    .align(Alignment.BottomEnd)
-                    .offset(x = (-16).dp, y = 16.dp)
-            ) {
-                IconButton(
-                    onClick = onAddToCartClick,
-                    enabled = product.inStock && !isInCart,
+                Spacer(Modifier.weight(1f))
+                
+                // Add to cart button (aligned at bottom of info section)
+                Box(
                     modifier = Modifier
-                        .size(56.dp)
-                        .clip(CircleShape)
-                        .background(if (product.inStock && !isInCart) Color(0xFFB6FF5B) else Color.Gray.copy(alpha = 0.3f))
+                        .fillMaxWidth()
+                        .padding(bottom = 16.dp)
+                        .offset(x = 12.dp),
+                    contentAlignment = Alignment.CenterEnd
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.ShoppingCart,
-                        contentDescription = null,
-                        tint = if (product.inStock && !isInCart) Color.Black else Color.White.copy(alpha = 0.5f),
-                        modifier = Modifier.size(28.dp)
-                    )
+                    IconButton(
+                        onClick = onAddToCartClick,
+                        enabled = product.inStock && !isInCart,
+                        modifier = Modifier
+                            .size(56.dp)
+                            .clip(CircleShape)
+                            .background(if (product.inStock && !isInCart) Color(0xFFB6FF5B) else Color.Gray.copy(alpha = 0.3f))
+                            .align(Alignment.CenterEnd)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.ShoppingCart,
+                            contentDescription = null,
+                            tint = if (product.inStock && !isInCart) Color.Black else Color.White.copy(alpha = 0.5f),
+                            modifier = Modifier.size(28.dp)
+                        )
+                    }
                 }
             }
         }
